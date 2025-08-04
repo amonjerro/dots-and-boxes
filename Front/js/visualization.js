@@ -60,11 +60,17 @@ function draw(){
         paintSquare(square)
     }
     update()
-    if (shouldRollTurn){
-        rollTurn()
-    }
-    if (currentPlayer == 1){
-        runAITurn()
+    if (isGameOngoing){
+        if (shouldRollTurn){
+            rollTurn()
+        }
+        if (currentPlayer == 1){
+            aiWaitTimer += 1
+            if (aiWaitTimer > waitTime){
+                runAITurn()
+                aiWaitTimer = 0
+            }
+        }
     }
 }
 
@@ -84,4 +90,13 @@ function mouseClicked(){
 function update(){
     p1scoreDOMElement.innerHTML = score[0]
     p2scoreDOMElement.innerHTML = score[1]
+
+    if (squaresByOpenEdges[0].size == squareCount && isGameOngoing){
+        isGameOngoing = false
+        gameOverFanfare()
+    }
+}
+
+function gameOverFanfare(){
+    console.log('yay')
 }

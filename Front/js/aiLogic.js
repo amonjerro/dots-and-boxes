@@ -1,3 +1,6 @@
+const waitTime = 10
+var aiWaitTimer = 0
+
 function getEdgeFromOpenEdgeSet(openEdgeCount){
     if (squaresByOpenEdges[openEdgeCount].size == 0){
         return null

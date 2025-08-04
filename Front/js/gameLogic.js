@@ -2,6 +2,7 @@ var canvasWidth = 600
 var canvasHeight = 400
 const deadZoneTolerance = 0.15
 var shouldRollTurn = false
+var isGameOngoing = true
 
 var gridWidth = 50
 var maxGridX = canvasWidth / gridWidth - 1
@@ -11,6 +12,7 @@ var squareSize = 4
 
 // Data structures
 var squares = {}
+var squareCount = 0
 var nodes = []
 var edges =  new Map()
 
@@ -78,6 +80,8 @@ function gameSetup(){
             
         }
     }
+
+    squareCount = Object.keys(squares).length
 
     for (let i = 0; i < MAX_PLAYERS; i++){
         score.push(0)

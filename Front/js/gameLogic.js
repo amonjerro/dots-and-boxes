@@ -3,9 +3,9 @@ var canvasHeight = 400
 const deadZoneTolerance = 0.15
 var shouldRollTurn = false
 
-var gridWidth = 20
+var gridWidth = 50
 var maxGridX = canvasWidth / gridWidth - 1
-var gridHeight = 20
+var gridHeight = 50
 var maxGridY = canvasHeight / gridHeight - 1
 var squareSize = 4
 
@@ -98,6 +98,7 @@ function processTurn(pickedEdge){
         edgesToPaint.push(pickedEdge)
         edges.set(pickedEdge, true)
         let squareCompleted = evaluateMove(pickedEdge)
+        console.log(squareCompleted)
         shouldRollTurn = !squareCompleted
     }
 }
@@ -138,12 +139,6 @@ function testIsSquareComplete(coordinates){
         console.error(coordinates)
     }
     let complete = squareToTest.openConnectionCount == 0
-    // for(let i = 0; i < squareToTest.length; i++){
-    //     if (!edges.get(squareToTest[i])){
-    //         complete = false
-    //         break
-    //     }
-    // }
     return complete
 }
 
@@ -187,42 +182,33 @@ function pickEdge(xCoord, yCoord){
     return key
 }
 
+function evaluateSquare(coordinates){
+    let extraTurn = false
+    updateSquareEdgeCount(coordinates)
+    if (testIsSquareComplete(coordinates)){
+        squaresToPaint.push({x:coordinates[0], y:coordinates[1]})
+        score[currentPlayer] += 1
+        extraTurn = true
+    }
+    return extraTurn
+}
+
 function evaluateMove(edge){
     let edgeCoords = edgeToCoordinates(edge)
     let extraTurn = false
     if (isHorizontalEdge(edge)){
         if (edgeCoords[1] > 1){
-            updateSquareEdgeCount([edgeCoords[0], edgeCoords[1]-1])
-            if (testIsSquareComplete([edgeCoords[0], edgeCoords[1]-1])){
-                squaresToPaint.push({x:edgeCoords[0], y:edgeCoords[1]-1})
-                score[currentPlayer] += 1
-                extraTurn = true
-            }
+            extraTurn = evaluateSquare([edgeCoords[0], edgeCoords[1]-1]) || extraTurn
         }
         if (edgeCoords[1] < maxGridY){
-            updateSquareEdgeCount([edgeCoords[0], edgeCoords[1]])
-            if (testIsSquareComplete([edgeCoords[0], edgeCoords[1]])){
-                squaresToPaint.push({x:edgeCoords[0], y:edgeCoords[1]})
-                score[currentPlayer] += 1
-                extraTurn = true
-            }
+            extraTurn = evaluateSquare([edgeCoords[0], edgeCoords[1]]) || extraTurn
         }
     } else {
         if (edgeCoords[0] > 1){
-            updateSquareEdgeCount([edgeCoords[0]-1, edgeCoords[1]])
-            if (testIsSquareComplete([edgeCoords[0]-1, edgeCoords[1]])){
-                squaresToPaint.push({x:edgeCoords[0]-1, y:edgeCoords[1]})
-                score[currentPlayer] += 1
-                extraTurn = true
-            }
+            extraTurn = evaluateSquare([edgeCoords[0]-1, edgeCoords[1]]) || extraTurn
         }
         if (edgeCoords[0] < maxGridX){
-            updateSquareEdgeCount([edgeCoords[0], edgeCoords[1]])
-            if (testIsSquareComplete([edgeCoords[0], edgeCoords[1]])){
-                squaresToPaint.push({x:edgeCoords[0], y:edgeCoords[1]})
-                score[currentPlayer] += 1
-                extraTurn = true
-            }
+            extraTurn = evaluateSquare([edgeCoords[0], edgeCoords[1]]) || extraTurn
         }
     }
     return extraTurn

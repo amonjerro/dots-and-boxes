@@ -45,7 +45,10 @@ function setup(){
     gameSetup()
     p1scoreDOMElement = document.querySelector('#player-1-score')
     p2scoreDOMElement = document.querySelector('#player-2-score')
-    
+    let p1colorElement = document.querySelector('#player-1-colors')
+    p1colorElement.style.backgroundColor = colors[0]
+    let p2colorElement = document.querySelector('#player-2-colors')
+    p2colorElement.style.backgroundColor = colors[1]
     background(100)
     drawNodes()
 }

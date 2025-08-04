@@ -36,7 +36,7 @@ function drawNodes(){
 }
 
 function setup(){
-    frameRate(2)
+    frameRate(60)
     let canvas = createCanvas(canvasWidth, canvasHeight)
     canvas.parent("p5-canvas")
     gameSetup()

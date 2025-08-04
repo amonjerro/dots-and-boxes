@@ -31,13 +31,21 @@ function gameSetup(){
     }
 
     for (let i = 1; i < (canvasWidth/gridWidth)-1; i++){
-        for (let j = 1; j < (canvasHeight / gridHeight)-1; j++){
-            let coordinateString = `${i},${j}`
-            let left = coordinateString + `-${i+1},${j}`
-            let bot = coordinateString + `-${i},${j+1}`
-            edges.set(left, false)
-            edges.set(bot, false)
-        }
+        let top = `${i},${1}-${i+1},1`
+        let bot = `${i},${canvasHeight /gridHeight -1}-${i+1},${canvasHeight /gridHeight -1}`
+        edges.set(top, true)
+        edgesToPaint.push(top)
+        edges.set(bot, true)
+        edgesToPaint.push(bot)
+    }
+
+    for (let i = 1; i < (canvasHeight/gridHeight)-1; i++){
+        let top = `${1},${i}-1,${i+1}`
+        let bot = `${canvasWidth /gridWidth -1},${i}-${canvasWidth /gridWidth -1},${i+1}`
+        edges.set(top, true)
+        edgesToPaint.push(top)
+        edges.set(bot, true)
+        edgesToPaint.push(bot)
     }
 
     for (let i = 1; i < (canvasWidth/gridWidth)-1; i++){

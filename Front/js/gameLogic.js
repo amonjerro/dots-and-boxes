@@ -61,6 +61,20 @@ function rollTurn(){
     }
 }
 
+function processTurn(pickedEdge){
+    if (pickedEdge){
+        edgesToPaint.push(pickedEdge)
+        let squareCompleted = evaluateMove(pickedEdge)
+        if (!squareCompleted){
+            rollTurn()
+        }
+    }
+}
+
+function nodeToCoordinates(node){
+    return node.split(',').map((e)=>{return parseInt(e)})
+}
+
 function edgeToCoordinates(edgeKey){
     let edgeEnds = edgeKey.split('-')
     let coordsOrigin = edgeEnds[0].split(',').map((e)=> {return parseInt(e)})
@@ -94,14 +108,14 @@ function pickEdge(xCoord, yCoord){
 
     let endX = wholeX
     let endY = wholeY
-    console.log(remainderX, remainderY)
+    //console.log(remainderX, remainderY)
     if (wholeX == 0 || wholeY == 0 || wholeX > maxGridX || wholeY > maxGridY){
-        console.log("Out of bounds")
+        //console.log("Out of bounds")
         return;
     }
     
     if (Math.abs(remainderX) > deadZoneTolerance && Math.abs(remainderY) > deadZoneTolerance ){
-        console.log("DeadZone")
+        //console.log("DeadZone")
         return;
     } else if (Math.abs(remainderY) > deadZoneTolerance) {
         // This is a vertical edge check
@@ -119,34 +133,39 @@ function pickEdge(xCoord, yCoord){
         }
     }
     let key = `${wholeX},${wholeY}-${endX},${endY}`
-    edgesToPaint.push(key)
     edges.set(key, true)
     return key
 }
 
 function evaluateMove(edge){
     let edgeCoords = edgeToCoordinates(edge)
+    let extraTurn = false
     if (isHorizontalEdge(edge)){
         if (edgeCoords[1] > 1){
             if (testIsSquareComplete([edgeCoords[0], edgeCoords[1]-1])){
                 squaresToPaint.push({x:edgeCoords[0], y:edgeCoords[1]-1})
+                extraTurn = true
             }
         }
         if (edgeCoords[1] < maxGridY){
             if (testIsSquareComplete([edgeCoords[0], edgeCoords[1]])){
                 squaresToPaint.push({x:edgeCoords[0], y:edgeCoords[1]})
+                extraTurn = true
             }
         }
     } else {
         if (edgeCoords[0] > 1){
             if (testIsSquareComplete([edgeCoords[0]-1, edgeCoords[1]])){
                 squaresToPaint.push({x:edgeCoords[0]-1, y:edgeCoords[1]})
+                extraTurn = true
             }
         }
         if (edgeCoords[0] < maxGridX){
             if (testIsSquareComplete([edgeCoords[0], edgeCoords[1]])){
                 squaresToPaint.push({x:edgeCoords[0], y:edgeCoords[1]})
+                extraTurn = true
             }
         }
     }
+    return extraTurn
 }

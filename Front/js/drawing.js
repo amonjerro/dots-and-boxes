@@ -1,6 +1,6 @@
 
 // Player Information
-const colors =  ['#DEADBF','#FEEDBF',"#BADDAD","#DADB0D"]
+const colors =  ['#DEADBF',"#BADDAD","#DADB0D",'#FEEDBF']
 const edgeWeight = 2
 
 function paintEdge(edgeKey){
@@ -40,7 +40,7 @@ function setup(){
     let canvas = createCanvas(canvasWidth, canvasHeight)
     canvas.parent("p5-canvas")
     gameSetup()
-    background(220)
+    background(100)
     drawNodes()
 }
 
@@ -53,16 +53,20 @@ function draw(){
     if (square){
         paintSquare(square)
     }
-
+    if (currentPlayer == 1){
+        runAITurn()
+    }
 }
 
 function mouseClicked(){
     if (mouseX > canvasWidth || mouseY > canvasHeight){
         return
     }
+
+    if (currentPlayer != 0){
+        return
+    }
     let coordinates = canvasToGrid(mouseX, mouseY)
     let pickedEdge = pickEdge(coordinates[0], coordinates[1])
-    if (pickedEdge){
-        evaluateMove(pickedEdge)
-    }
+    processTurn(pickedEdge)
 }

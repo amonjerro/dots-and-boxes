@@ -52,3 +52,14 @@ body{
     flex:auto;
     text-align: right;
 }
+
+.winner {
+    text-align: center;
+    font-size: xx-large;
+    border-top:1px solid #333;
+}
+
+#turn-reminder{
+    text-align: center;
+    font-size: xx-large;
+}

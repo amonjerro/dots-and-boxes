@@ -3,6 +3,7 @@
 const colors =  ['#DEADBF',"#BADDAD","#DADB0D",'#FEEDBF']
 const edgeWeight = 2
 
+var turnReminder;
 var p1scoreDOMElement; 
 var p2scoreDOMElement; 
 
@@ -38,17 +39,26 @@ function drawNodes(){
     })
 }
 
+function getDOMElements(){
+    p1scoreDOMElement = document.querySelector('#player-1-score')
+    p2scoreDOMElement = document.querySelector('#player-2-score')
+    turnReminder = document.querySelector('#turn-reminder')
+}
+
+function paintColorsOnCards(){
+    let p1colorElement = document.querySelector('#player-1-colors')
+    p1colorElement.style.backgroundColor = colors[0]
+    let p2colorElement = document.querySelector('#player-2-colors')
+    p2colorElement.style.backgroundColor = colors[1]
+}
+
 function setup(){
     frameRate(60)
     let canvas = createCanvas(canvasWidth, canvasHeight)
     canvas.parent("p5-canvas")
     gameSetup()
-    p1scoreDOMElement = document.querySelector('#player-1-score')
-    p2scoreDOMElement = document.querySelector('#player-2-score')
-    let p1colorElement = document.querySelector('#player-1-colors')
-    p1colorElement.style.backgroundColor = colors[0]
-    let p2colorElement = document.querySelector('#player-2-colors')
-    p2colorElement.style.backgroundColor = colors[1]
+    getDOMElements()
+    paintColorsOnCards()
     background(100)
     drawNodes()
 }
@@ -68,11 +78,14 @@ function draw(){
             rollTurn()
         }
         if (currentPlayer == 1){
+            turnReminder.innerHTML = ''
             aiWaitTimer += 1
             if (aiWaitTimer > waitTime){
                 runAITurn()
                 aiWaitTimer = 0
             }
+        } else { 
+            turnReminder.innerHTML = "It's your turn"
         }
     }
 }
@@ -101,5 +114,13 @@ function update(){
 }
 
 function gameOverFanfare(){
-    console.log('yay')
+    let p1WinnerBox = document.querySelector('#p1-winner-box')
+    let p2WinnerBox = document.querySelector('#p2-winner-box')
+    if (score[0]>score[1]){
+        p1WinnerBox.classList.add("winner")
+        p1WinnerBox.innerHTML = "Winner!"
+    } else {
+        p2WinnerBox.classList.add("winner")
+        p2WinnerBox.innerHTML = "Winner!"
+    }
 }

@@ -1,4 +1,4 @@
-const waitTime = 10
+const waitTime = 17
 var aiWaitTimer = 0
 
 function getEdgeFromOpenEdgeSet(openEdgeCount){

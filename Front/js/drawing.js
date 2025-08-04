@@ -16,6 +16,12 @@ function paintEdge(edgeKey){
     line(pixelOriginX, pixelOriginY, pixelEndX, pixelEndY)
 }
 
+function paintSquare(squareLocation){
+    fill(colors[currentPlayer])
+    stroke(colors[currentPlayer])
+    rect(squareLocation.x * gridWidth, squareLocation.y * gridHeight, gridWidth, gridHeight)
+}
+
 function canvasToGrid(xPos, yPos){
     return [xPos / gridWidth, yPos / gridHeight]
 }
@@ -24,7 +30,7 @@ function drawNodes(){
     nodes.map((key)=>{
         let coordinates = key.split(',')
         let xCoord = (parseInt(coordinates[0])*gridWidth) - squareSize/2
-        let yCoord = (parseInt(coordinates[1])*gridWidth) - squareSize/2
+        let yCoord = (parseInt(coordinates[1])*gridHeight) - squareSize/2
         square(xCoord, yCoord, squareSize)
     })
 }
@@ -43,6 +49,10 @@ function draw(){
     if (edge){
         paintEdge(edge)
     }
+    let square = squaresToPaint.pop()
+    if (square){
+        paintSquare(square)
+    }
 
 }
 
@@ -51,5 +61,8 @@ function mouseClicked(){
         return
     }
     let coordinates = canvasToGrid(mouseX, mouseY)
-    pickEdge(coordinates[0], coordinates[1])
+    let pickedEdge = pickEdge(coordinates[0], coordinates[1])
+    if (pickedEdge){
+        evaluateMove(pickedEdge)
+    }
 }

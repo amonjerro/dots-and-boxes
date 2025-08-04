@@ -15,7 +15,7 @@ var nodes = []
 var edges =  new Map()
 
 var edgesToPaint = []
-var squarestoPaint = []
+var squaresToPaint = []
 
 // Player Information
 const MAX_PLAYERS = 2;
@@ -61,18 +61,23 @@ function rollTurn(){
     }
 }
 
-function isHorizontalEdge(edgeKey){
+function edgeToCoordinates(edgeKey){
     let edgeEnds = edgeKey.split('-')
     let coordsOrigin = edgeEnds[0].split(',').map((e)=> {return parseInt(e)})
     let coordsEnd = edgeEnds[1].split(',').map((e)=> {return parseInt(e)})
-    return coordsOrigin[0] < coordsEnd[0] && coordsOrigin[1] == coordsEnd[1]
+    return [coordsOrigin[0], coordsOrigin[1], coordsEnd[0], coordsEnd[1]]
+}
+
+function isHorizontalEdge(edgeKey){
+    let coords = edgeToCoordinates(edgeKey)
+    return coords[0] < coords[2] && coords[1] == coords[3]
 }
 
 function testIsSquareComplete(coordinates){
-    let squareToTest = squares[coordinates]
+    let squareToTest = squares[`${coordinates[0]},${coordinates[1]}`]
     let complete = true
     for(let i = 0; i < squareToTest.length; i++){
-        if (!edges.get(sqaureToTest[i])){
+        if (!edges.get(squareToTest[i])){
             complete = false
             break
         }
@@ -116,4 +121,32 @@ function pickEdge(xCoord, yCoord){
     let key = `${wholeX},${wholeY}-${endX},${endY}`
     edgesToPaint.push(key)
     edges.set(key, true)
+    return key
+}
+
+function evaluateMove(edge){
+    let edgeCoords = edgeToCoordinates(edge)
+    if (isHorizontalEdge(edge)){
+        if (edgeCoords[1] > 1){
+            if (testIsSquareComplete([edgeCoords[0], edgeCoords[1]-1])){
+                squaresToPaint.push({x:edgeCoords[0], y:edgeCoords[1]-1})
+            }
+        }
+        if (edgeCoords[1] < maxGridY){
+            if (testIsSquareComplete([edgeCoords[0], edgeCoords[1]])){
+                squaresToPaint.push({x:edgeCoords[0], y:edgeCoords[1]})
+            }
+        }
+    } else {
+        if (edgeCoords[0] > 1){
+            if (testIsSquareComplete([edgeCoords[0]-1, edgeCoords[1]])){
+                squaresToPaint.push({x:edgeCoords[0]-1, y:edgeCoords[1]})
+            }
+        }
+        if (edgeCoords[0] < maxGridX){
+            if (testIsSquareComplete([edgeCoords[0], edgeCoords[1]])){
+                squaresToPaint.push({x:edgeCoords[0], y:edgeCoords[1]})
+            }
+        }
+    }
 }

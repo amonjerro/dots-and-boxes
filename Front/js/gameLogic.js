@@ -103,6 +103,9 @@ function isHorizontalEdge(edgeKey){
 
 function testIsSquareComplete(coordinates){
     let squareToTest = squares[`${coordinates[0]},${coordinates[1]}`]
+    if (!squareToTest){
+        console.log(coordinates)
+    }
     let complete = true
     for(let i = 0; i < squareToTest.length; i++){
         if (!edges.get(squareToTest[i])){
@@ -147,6 +150,9 @@ function pickEdge(xCoord, yCoord){
         }
     }
     let key = `${wholeX},${wholeY}-${endX},${endY}`
+    if (edges.get(key)){
+        return
+    }
     return key
 }
 

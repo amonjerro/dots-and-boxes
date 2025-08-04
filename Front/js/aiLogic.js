@@ -1,5 +1,5 @@
 function pickAIEdge(){
-    let randomNode = nodeToCoordinates(nodes[Math.floor(Math.random()*nodes.length)])
+    let randomNode = nodeToCoordinates(nodes[Math.floor(Math.random()*nodes.length-1)])
     let checkRightFirst = Math.floor(Math.random()*10)%2
     if (checkRightFirst){
         let edgeKey = `${randomNode[0]},${randomNode[1]}-${randomNode[0]+1},${randomNode[1]}`

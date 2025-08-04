@@ -1,7 +1,7 @@
 var canvasWidth = 600
 var canvasHeight = 400
 const deadZoneTolerance = 0.15
-
+var shouldRollTurn = false
 
 var gridWidth = 20
 var maxGridX = canvasWidth / gridWidth - 1
@@ -59,15 +59,15 @@ function rollTurn(){
     if (currentPlayer == MAX_PLAYERS){
         currentPlayer = currentPlayer % MAX_PLAYERS;
     }
+    shouldRollTurn = false
 }
 
 function processTurn(pickedEdge){
     if (pickedEdge){
         edgesToPaint.push(pickedEdge)
+        edges.set(pickedEdge, true)
         let squareCompleted = evaluateMove(pickedEdge)
-        if (!squareCompleted){
-            rollTurn()
-        }
+        shouldRollTurn = !squareCompleted
     }
 }
 
@@ -133,7 +133,6 @@ function pickEdge(xCoord, yCoord){
         }
     }
     let key = `${wholeX},${wholeY}-${endX},${endY}`
-    edges.set(key, true)
     return key
 }
 

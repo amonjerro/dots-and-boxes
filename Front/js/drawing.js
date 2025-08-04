@@ -53,6 +53,9 @@ function draw(){
     if (square){
         paintSquare(square)
     }
+    if (shouldRollTurn){
+        rollTurn()
+    }
     if (currentPlayer == 1){
         runAITurn()
     }

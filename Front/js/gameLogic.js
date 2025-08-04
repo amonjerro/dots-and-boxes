@@ -14,6 +14,14 @@ var squares = {}
 var nodes = []
 var edges =  new Map()
 
+var squaresByOpenEdges = {
+    0: new Set(),
+    1: new Set(),
+    2: new Set(),
+    3: new Set(),
+    4: new Set()
+}
+
 var edgesToPaint = []
 var squaresToPaint = []
 
@@ -57,7 +65,16 @@ function gameSetup(){
             let botEdge = `${i},${j+1}` + `-${i+1},${j+1}`
             let leftEdge = coordinateString + `-${i},${j+1}`
             let rightEdge = `${i+1},${j}` + `-${i+1},${j+1}`
-            squares[coordinateString] = [leftEdge, topEdge, rightEdge, botEdge]
+            let count = [leftEdge, topEdge, rightEdge, botEdge].reduce((acc, curr)=>
+                    { 
+                        let v = edges.get(curr) ? 0 : 1
+                        return acc + v
+                    }, 0)
+            squares[coordinateString] = {
+                'edges':[leftEdge, topEdge, rightEdge, botEdge],
+                'openConnectionCount': count
+            }
+            squaresByOpenEdges[count].add(coordinateString)
             
         }
     }
@@ -101,18 +118,32 @@ function isHorizontalEdge(edgeKey){
     return coords[0] < coords[2] && coords[1] == coords[3]
 }
 
+function updateSquareEdgeCount(squareCoordinates){
+    let key = `${squareCoordinates[0]},${squareCoordinates[1]}`
+    let square = squares[key]
+    if (!square){
+        console.error(coordinates)
+    }
+
+    // manipulate the sets
+    squaresByOpenEdges[square.openConnectionCount].delete(key)
+    squares[key].openConnectionCount -= 1
+    squaresByOpenEdges[squares[key].openConnectionCount].add(key)
+
+}
+
 function testIsSquareComplete(coordinates){
-    let squareToTest = squares[`${coordinates[0]},${coordinates[1]}`]
+    let squareToTest = squares[`${coordinates[0]},${coordinates[1]}`].edges
     if (!squareToTest){
-        console.log(coordinates)
+        console.error(coordinates)
     }
-    let complete = true
-    for(let i = 0; i < squareToTest.length; i++){
-        if (!edges.get(squareToTest[i])){
-            complete = false
-            break
-        }
-    }
+    let complete = squareToTest.openConnectionCount == 0
+    // for(let i = 0; i < squareToTest.length; i++){
+    //     if (!edges.get(squareToTest[i])){
+    //         complete = false
+    //         break
+    //     }
+    // }
     return complete
 }
 
@@ -161,6 +192,7 @@ function evaluateMove(edge){
     let extraTurn = false
     if (isHorizontalEdge(edge)){
         if (edgeCoords[1] > 1){
+            updateSquareEdgeCount([edgeCoords[0], edgeCoords[1]-1])
             if (testIsSquareComplete([edgeCoords[0], edgeCoords[1]-1])){
                 squaresToPaint.push({x:edgeCoords[0], y:edgeCoords[1]-1})
                 score[currentPlayer] += 1
@@ -168,6 +200,7 @@ function evaluateMove(edge){
             }
         }
         if (edgeCoords[1] < maxGridY){
+            updateSquareEdgeCount([edgeCoords[0], edgeCoords[1]])
             if (testIsSquareComplete([edgeCoords[0], edgeCoords[1]])){
                 squaresToPaint.push({x:edgeCoords[0], y:edgeCoords[1]})
                 score[currentPlayer] += 1
@@ -176,6 +209,7 @@ function evaluateMove(edge){
         }
     } else {
         if (edgeCoords[0] > 1){
+            updateSquareEdgeCount([edgeCoords[0]-1, edgeCoords[1]])
             if (testIsSquareComplete([edgeCoords[0]-1, edgeCoords[1]])){
                 squaresToPaint.push({x:edgeCoords[0]-1, y:edgeCoords[1]})
                 score[currentPlayer] += 1
@@ -183,6 +217,7 @@ function evaluateMove(edge){
             }
         }
         if (edgeCoords[0] < maxGridX){
+            updateSquareEdgeCount([edgeCoords[0], edgeCoords[1]])
             if (testIsSquareComplete([edgeCoords[0], edgeCoords[1]])){
                 squaresToPaint.push({x:edgeCoords[0], y:edgeCoords[1]})
                 score[currentPlayer] += 1

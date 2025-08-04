@@ -133,7 +133,7 @@ function updateSquareEdgeCount(squareCoordinates){
 }
 
 function testIsSquareComplete(coordinates){
-    let squareToTest = squares[`${coordinates[0]},${coordinates[1]}`].edges
+    let squareToTest = squares[`${coordinates[0]},${coordinates[1]}`]
     if (!squareToTest){
         console.error(coordinates)
     }

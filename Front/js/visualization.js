@@ -3,6 +3,9 @@
 const colors =  ['#DEADBF',"#BADDAD","#DADB0D",'#FEEDBF']
 const edgeWeight = 2
 
+var p1scoreDOMElement; 
+var p2scoreDOMElement; 
+
 function paintEdge(edgeKey){
     strokeWeight = edgeWeight
     stroke(colors[currentPlayer])
@@ -40,6 +43,9 @@ function setup(){
     let canvas = createCanvas(canvasWidth, canvasHeight)
     canvas.parent("p5-canvas")
     gameSetup()
+    p1scoreDOMElement = document.querySelector('#player-1-score')
+    p2scoreDOMElement = document.querySelector('#player-2-score')
+    
     background(100)
     drawNodes()
 }
@@ -53,6 +59,7 @@ function draw(){
     if (square){
         paintSquare(square)
     }
+    update()
     if (shouldRollTurn){
         rollTurn()
     }
@@ -72,4 +79,9 @@ function mouseClicked(){
     let coordinates = canvasToGrid(mouseX, mouseY)
     let pickedEdge = pickEdge(coordinates[0], coordinates[1])
     processTurn(pickedEdge)
+}
+
+function update(){
+    p1scoreDOMElement.innerHTML = score[0]
+    p2scoreDOMElement.innerHTML = score[1]
 }

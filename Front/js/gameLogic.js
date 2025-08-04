@@ -21,6 +21,8 @@ var squaresToPaint = []
 const MAX_PLAYERS = 2;
 var currentPlayer = 0;
 
+var score = []
+
 function gameSetup(){
     // Set up nodes
     for (let i = 1; i < canvasWidth/gridWidth; i++){
@@ -58,6 +60,10 @@ function gameSetup(){
             squares[coordinateString] = [leftEdge, topEdge, rightEdge, botEdge]
             
         }
+    }
+
+    for (let i = 0; i < MAX_PLAYERS; i++){
+        score.push(0)
     }
 }
 
@@ -151,12 +157,14 @@ function evaluateMove(edge){
         if (edgeCoords[1] > 1){
             if (testIsSquareComplete([edgeCoords[0], edgeCoords[1]-1])){
                 squaresToPaint.push({x:edgeCoords[0], y:edgeCoords[1]-1})
+                score[currentPlayer] += 1
                 extraTurn = true
             }
         }
         if (edgeCoords[1] < maxGridY){
             if (testIsSquareComplete([edgeCoords[0], edgeCoords[1]])){
                 squaresToPaint.push({x:edgeCoords[0], y:edgeCoords[1]})
+                score[currentPlayer] += 1
                 extraTurn = true
             }
         }
@@ -164,12 +172,14 @@ function evaluateMove(edge){
         if (edgeCoords[0] > 1){
             if (testIsSquareComplete([edgeCoords[0]-1, edgeCoords[1]])){
                 squaresToPaint.push({x:edgeCoords[0]-1, y:edgeCoords[1]})
+                score[currentPlayer] += 1
                 extraTurn = true
             }
         }
         if (edgeCoords[0] < maxGridX){
             if (testIsSquareComplete([edgeCoords[0], edgeCoords[1]])){
                 squaresToPaint.push({x:edgeCoords[0], y:edgeCoords[1]})
+                score[currentPlayer] += 1
                 extraTurn = true
             }
         }

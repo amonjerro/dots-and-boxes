@@ -6,12 +6,24 @@
         <script src="https://cdn.jsdelivr.net/npm/p5@1.11.9/lib/p5.min.js"></script>
         <script src="js/gameLogic.js"></script>
         <script src="js/aiLogic.js"></script>
-        <script src="js/drawing.js"></script>
+        <script src="js/visualization.js"></script>
     </head>
     <body>
         <div id="layout">
             <div id="p5-canvas">
                 
+            </div>
+            <div id="scores">
+                <div class="player-score">
+                    <div class="player-name"><span>Player 1</span></div>
+                    <div class="player-color"><span>Player Color:</span><span id="player-1-colors"></span></div>
+                    <div class="player-score"><span>Player Score: </span><span id="player-1-score"></span></div>
+                </div>
+                <div class="player-score">
+                    <div class="player-name"><span>Player 2</span></div>
+                    <div class="player-color"><span>Player Color:</span><span id="player-2-colors"></span></div>
+                    <div class="player-score"><span>Player Score: </span><span id="player-2-score"></span></div>
+                </div>
             </div>
         </div>
         <script>

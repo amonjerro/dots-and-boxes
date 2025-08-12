@@ -4,10 +4,11 @@ These are the instructions and how-to of getting the environment setup on your l
 
 1. Install [Docker Desktop](https://docs.docker.com/desktop/). It includes the Docker and Docker Compose CLI tools.
 2. Create a .env file at the root level, refer to the Environment section for details
-3. On any directory within the project, use the command `docker compose up` to create and start up the application
+3. On any directory within the project, use the command `docker compose up -d` to create and start up the application
 4. Start hacking.
 
 The client container is set up to restart and update if any changes are detected on its codebase. The other ones aren't.
+On Docker Desktop, you can monitor the state and health of any service in the container.
 
 # Architecture
 

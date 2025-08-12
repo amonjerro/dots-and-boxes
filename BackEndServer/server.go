@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/joho/godotenv"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -17,13 +16,9 @@ func failOnError(err error, msg string) {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading env file")
-	}
-
 	// Pull up the messaging broker and configure it
 	brokerURI := os.Getenv("BROKER_URI")
+	log.Printf("%s", brokerURI)
 	conn, err := amqp.Dial(brokerURI)
 	failOnError(err, "Failed to connect to messaging service")
 

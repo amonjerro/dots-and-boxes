@@ -1,0 +1,35 @@
+services:
+  rabbitmq:
+    image: "rabbitmq:management-alpine"
+    ports:
+    - "${BROKER_PORT}:${BROKER_PORT}"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${BROKER_USER}
+      RABBITMQ_DEFAULT_PASS: ${BROKER_PASS}
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      start_period: 10s
+      timeout: 30s
+      retries: 3
+  client:
+    build: ./FrontEndServer/
+    ports:
+    - "${CLIENT_PORT}:${CLIENT_PORT}"
+    develop:
+       watch:
+         - action: sync
+           path: ./FrontEndServer/
+           target: /src
+    environment:
+      PORT: ${CLIENT_PORT}
+  server:
+    build: ./BackEndServer
+    ports:
+    - "${SERVER_PORT}:${SERVER_PORT}"
+    environment:
+      BROKER_URI: "amqp://${BROKER_USER}:${BROKER_PASS}@rabbitmq:${BROKER_PORT}/"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+        restart: true

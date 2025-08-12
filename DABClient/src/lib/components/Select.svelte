@@ -10,11 +10,11 @@
 </script>
 
 <label {...select.label}>{label}</label>
-<button type="button"  {...select.trigger} class="btn preset-filled min-w-64">
+<button type="button"  {...select.trigger} class="btn btn-lg preset-filled min-w-64">
     {select.value}
 </button>
 
-<div {...select.content} class="p-2 bg-surface-50-950 outline-1 outline-surface-950-50 rounded-base">
+<div {...select.content} class="p-4 bg-surface-50-950 outline-1 outline-surface-950-50 rounded-base text-xl min-w-64">
     {#each options as option}
         <div {...select.getOption(option)}>
             <span>{option}</span>
@@ -27,7 +27,7 @@
 
 <style>
     [data-melt-select-option] {
-        padding: 2px 8px;
+        padding: 8px 16px;
         border-radius: var(--radius-base);
     }
 

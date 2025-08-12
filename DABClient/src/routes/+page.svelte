@@ -8,6 +8,7 @@
     const players: PlayerType[] = $state([ "human", "computer" ]);
     const playersContainComputer = $derived(players.includes("computer"));
     const playersContainHuman = $derived(players.includes("human"));
+    const moreThanOneHuman = $derived(players.filter(p => p === "human").length > 1);
 
     const addPlayer = () => {
         if (players.length < 4) {
@@ -39,10 +40,15 @@
         computer: "fa-solid fa-robot fa-xl"
     };
 
-    $inspect(players, playersContainComputer, playersContainHuman);
+    // Button action depends on players
+    const getStartButtonText = () => {
+        return moreThanOneHuman ? "Create Lobby" : "Start Game"
+    }
+
+    $inspect(players, playersContainComputer, playersContainHuman, moreThanOneHuman);
 </script>
 
-<form class="flex flex-col gap-8 items-center [&_label]:h4" action="">
+<form class="flex flex-col gap-8 items-center [&_label]:h3" action="">
     <h2 class="h2 mt-8">Start a Game</h2>
 
     <div class="flex flex-col gap-4 items-center">
@@ -50,18 +56,18 @@
         <div class="flex gap-4 items-center">
             <button
                 type="button"
-                class="btn-icon preset-filled"
+                class="btn-icon btn-icon-lg preset-filled"
                 onclick={removePlayer}
                 aria-label="remove player"
             >
                 <i class="fa-solid fa-chevron-left"></i>
             </button>
             
-            <p>{players.length} Players</p>
+            <p class="text-2xl">{players.length} Players</p>
     
             <button
                 type="button"
-                class="btn-icon preset-filled"
+                class="btn-icon btn-icon-lg preset-filled"
                 onclick={addPlayer}
                 aria-label="add player"
             >
@@ -86,9 +92,9 @@
             {/each}
         </div>
     
-        <div>
+        <div class="text-center">
             {#if !playersContainHuman}
-                <p class="text-error-500">At least one human player is required.</p>
+                <p class="text-error-500">At least one human is required.</p>
             {:else}
                 <p class="text-surface-200">Click a player to change their type.</p>
             {/if}
@@ -107,7 +113,9 @@
         <Select label="Grid Size" options={gridSizeOptions} />
     </div>
 
-    <button type="submit" disabled={!playersContainHuman} class="btn preset-filled">START</button>
+    <button type="submit" disabled={!playersContainHuman} class="btn preset-filled-success-500 btn-lg mt-2 min-w-64 uppercase">
+        {getStartButtonText()}
+    </button>
 </form>
 
 <div class="bg-[url('https://placehold.co/450x300?text=Dots+And+Boxes')] bg-contain flex justify-center mt-10">

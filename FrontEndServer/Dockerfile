@@ -1,5 +1,5 @@
 FROM node:24-alpine
-
+WORKDIR /src
 EXPOSE 3000
 COPY . .
 

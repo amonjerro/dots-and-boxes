@@ -1,7 +1,9 @@
 <script lang="ts">
+    import { goto } from "$app/navigation";
     import Icon from "$lib/components/Icon.svelte";
     import Select from "$lib/components/Select.svelte";
-    import { difficulties, gridSizes, type PlayerType } from "$lib/types/gameTypes";
+    import { difficulties, gridSizes } from "$lib/data/gameParams";
+    import { type PlayerType } from "$lib/types/gameTypes";
     import { Avatar } from "@skeletonlabs/skeleton-svelte"
     import { flip } from "svelte/animate";
     import { scale } from "svelte/transition";
@@ -49,7 +51,7 @@
 </script>
 
 <!-- Game Parameters Form -->
-<form class="flex flex-col gap-8 items-center [&_label]:h3" action="">
+<form class="flex flex-col gap-8 items-center [&_label]:h3" action="/game">
     <h2 class="h2 mt-8">Start a Game</h2>
 
     <!-- Player Settings -->
@@ -79,12 +81,16 @@
         </div>
     
         <!-- Player Editor -->
-        <div class="flex gap-4">
+        <ul class="flex gap-4">
             {#each players as player, index (index)}
+            <li 
+                transition:scale={{ duration: 100 }} 
+                animate:flip={{ duration: 100 }}
+                class="flex"
+            >
                 <button
                     type="button"
-                    transition:scale={{ duration: 100 }} 
-                    animate:flip={{ duration: 100 }} 
+                    
                     onclick={() => togglePlayer(index)}
                 >
                     <Avatar name="icon" background="preset-filled">
@@ -93,8 +99,9 @@
                     <!-- Hidden input to track player type -->
                     <input type="hidden" name="player" value={player} />
                 </button>
+            </li>
             {/each}
-        </div>
+            </ul>
     
         <!-- Player Editor Instructions -->
         <div class="text-center">
@@ -108,12 +115,12 @@
 
     <!-- Computer Difficulty -->
     <div class="flex flex-col items-center">
-        <Select label="Difficulty" options={[...difficulties]} disabled={!playersContainRobot}/>
+        <Select label="Difficulty" name="difficulty" options={[...difficulties]} disabled={!playersContainRobot}/>
     </div>
 
     <!-- Grid Size -->
     <div class="flex flex-col items-center">
-        <Select label="Grid Size" options={[...gridSizes]} />
+        <Select label="Grid Size" name="gridSize" options={[...gridSizes]} />
     </div>
 
     <!-- Submit Button -->

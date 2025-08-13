@@ -2,7 +2,7 @@
 <script lang="ts">
     import { Select } from "melt/builders";
 
-    let {label, options, disabled = false}: {label: string, options: string[], disabled?: boolean} = $props();
+    let {label, options, name, disabled = false}: {label: string, options: string[], name: string, disabled?: boolean} = $props();
     type Option = (typeof options)[number];
         
     const select = new Select<Option>();
@@ -26,7 +26,7 @@
 </div>
 
 <!-- Hidden input to track selected option -->
-<input type="hidden" {disabled} name={label} value={select.value} />
+<input type="hidden" {disabled} {name} value={select.value} />
 
 <!-- Select styling using Melt UI data attributes -->
 <style>

@@ -1,6 +1,6 @@
 <!-- A utility component for displaying FontAwesome icons -->
 <script lang="ts">
-    import type { Icon, IconSize } from "$lib/types/gameTypes";
+    import type { Icon, IconSize } from "$lib/types/uiTypes";
 
     let {name, size}: {name: Icon, size?: IconSize} = $props();
 </script>

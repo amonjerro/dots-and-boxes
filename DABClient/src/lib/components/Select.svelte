@@ -1,20 +1,23 @@
+<!-- Adapted from https://next.melt-ui.com/components/select/ -->
 <script lang="ts">
     import { Select } from "melt/builders";
 
-    // declare options prop
-    let {label, options}: {label: string, options: string[]} = $props();
+    let {label, options, disabled = false}: {label: string, options: string[], disabled?: boolean} = $props();
     type Option = (typeof options)[number];
         
     const select = new Select<Option>();
     select.value = options[0];
 </script>
 
-<label {...select.label}>{label}</label>
-<button type="button"  {...select.trigger} class="btn btn-lg preset-filled min-w-64">
+<!-- Select Label -->
+<label {...select.label} class:pointer-events-none={disabled} class={disabled ? "filter brightness-75" : ""}>{label}</label>
+<!-- Select Trigger -->
+<button {disabled} type="button" {...select.trigger} class="btn btn-lg preset-filled min-w-64 capitalize" class:pointer-events-none={disabled}>
     {select.value}
 </button>
 
-<div {...select.content} class="p-4 bg-surface-50-950 outline-1 outline-surface-950-50 rounded-base text-xl min-w-64">
+<!-- Select Content (Options) -->
+<div {...select.content} class="p-4 bg-surface-50-950 outline-1 outline-surface-950-50 rounded-base text-xl min-w-64 capitalize">
     {#each options as option}
         <div {...select.getOption(option)}>
             <span>{option}</span>
@@ -23,8 +26,9 @@
 </div>
 
 <!-- Hidden input to track selected option -->
-<input type="hidden" name={label} value={select.value} />
+<input type="hidden" {disabled} name={label} value={select.value} />
 
+<!-- Select styling using Melt UI data attributes -->
 <style>
     [data-melt-select-option] {
         padding: 8px 16px;

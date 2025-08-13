@@ -4,6 +4,5 @@
 @import "@skeletonlabs/skeleton";
 @import "@skeletonlabs/skeleton/optional/presets";
 @import "@skeletonlabs/skeleton/themes/fennec";
-@import "@skeletonlabs/skeleton/themes/mint";
 
 @source '../node_modules/@skeletonlabs/skeleton-svelte/dist';

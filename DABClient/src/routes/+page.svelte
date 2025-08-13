@@ -1,58 +1,61 @@
 <script lang="ts">
+    import Icon from "$lib/components/Icon.svelte";
     import Select from "$lib/components/Select.svelte";
-    import type { PlayerType } from "$lib/types/gameTypes";
+    import { difficulties, gridSizes, type PlayerType } from "$lib/types/gameTypes";
     import { Avatar } from "@skeletonlabs/skeleton-svelte"
     import { flip } from "svelte/animate";
     import { scale } from "svelte/transition";
+    
+    const players: PlayerType[] = $state([ "user", "robot" ]);
+    const playersContainRobot = $derived(players.includes("robot"));
+    const playersContainUser = $derived(players.includes("user"));
+    const moreThanOneUser = $derived(players.filter(p => p === "user").length > 1);
 
-    const players: PlayerType[] = $state([ "human", "computer" ]);
-    const playersContainComputer = $derived(players.includes("computer"));
-    const playersContainHuman = $derived(players.includes("human"));
-    const moreThanOneHuman = $derived(players.filter(p => p === "human").length > 1);
-
+    /**
+     * If there are fewer than four players, add a robot.
+     * Otherwise, overflow to first 2 players.
+     */
     const addPlayer = () => {
         if (players.length < 4) {
-            players.push("computer");
+            players.push("robot");
         }
         else {
             players.splice(2, 2);
         }
     };
 
+    /**
+     * If there are more than two players, remove the last one.
+     * Otherwise, underflow to 4 players.
+     */
     const removePlayer = () => {
         if (players.length > 2) {
             players.pop();
         }
         else{
-            players.push("computer", "computer");
+            players.push("robot", "robot");
         }
     };
 
+    /**
+     * Toggle the player type between "user" and "robot".
+     * @param index The index of the player to toggle.
+     */
     const togglePlayer = (index: number) => {
-        players[index] = players[index] === "human" ? "computer" : "human";
+        players[index] = players[index] === "user" ? "robot" : "user";
     }
 
-    const computerDifficultyOptions = ["Easy", "Medium", "Hard"];
-    const gridSizeOptions = ["Small (4x3)", "Medium (7x6)", "Large (10x9)"];
-
-    const iconMap = {
-        human: "fa-solid fa-user fa-xl",
-        computer: "fa-solid fa-robot fa-xl"
-    };
-
-    // Button action depends on players
-    const getStartButtonText = () => {
-        return moreThanOneHuman ? "Create Lobby" : "Start Game"
-    }
-
-    $inspect(players, playersContainComputer, playersContainHuman, moreThanOneHuman);
+    $inspect(players, playersContainRobot, playersContainUser, moreThanOneUser);
 </script>
 
+<!-- Game Parameters Form -->
 <form class="flex flex-col gap-8 items-center [&_label]:h3" action="">
     <h2 class="h2 mt-8">Start a Game</h2>
 
+    <!-- Player Settings -->
     <div class="flex flex-col gap-4 items-center">
         <label for="playerCount">Player Count</label>
+        <!-- Player Incrementer -->
         <div class="flex gap-4 items-center">
             <button
                 type="button"
@@ -60,7 +63,7 @@
                 onclick={removePlayer}
                 aria-label="remove player"
             >
-                <i class="fa-solid fa-chevron-left"></i>
+                <Icon name="chevron-left" />
             </button>
             
             <p class="text-2xl">{players.length} Players</p>
@@ -71,10 +74,11 @@
                 onclick={addPlayer}
                 aria-label="add player"
             >
-                <i class="fa-solid fa-chevron-right"></i>
+                <Icon name="chevron-right" />
             </button>
         </div>
     
+        <!-- Player Editor -->
         <div class="flex gap-4">
             {#each players as player, index (index)}
                 <button
@@ -84,7 +88,7 @@
                     onclick={() => togglePlayer(index)}
                 >
                     <Avatar name="icon" background="preset-filled">
-                        <i class={iconMap[player]}></i>
+                        <Icon name={player} />
                     </Avatar>
                     <!-- Hidden input to track player type -->
                     <input type="hidden" name="player" value={player} />
@@ -92,8 +96,9 @@
             {/each}
         </div>
     
+        <!-- Player Editor Instructions -->
         <div class="text-center">
-            {#if !playersContainHuman}
+            {#if !playersContainUser}
                 <p class="text-error-500">At least one human is required.</p>
             {:else}
                 <p class="text-surface-200">Click a player to change their type.</p>
@@ -102,22 +107,22 @@
     </div>
 
     <!-- Computer Difficulty -->
-    {#if playersContainComputer}
-        <div class="flex flex-col items-center">
-            <Select label="Computer Difficulty" options={computerDifficultyOptions} />
-        </div>
-    {/if}
+    <div class="flex flex-col items-center">
+        <Select label="Difficulty" options={[...difficulties]} disabled={!playersContainRobot}/>
+    </div>
 
     <!-- Grid Size -->
     <div class="flex flex-col items-center">
-        <Select label="Grid Size" options={gridSizeOptions} />
+        <Select label="Grid Size" options={[...gridSizes]} />
     </div>
 
-    <button type="submit" disabled={!playersContainHuman} class="btn preset-filled-success-500 btn-lg mt-2 min-w-64 uppercase">
-        {getStartButtonText()}
+    <!-- Submit Button -->
+    <button type="submit" disabled={!playersContainUser} class:pointer-events-none={!playersContainUser} class="btn preset-filled-success-500 btn-lg mt-2 min-w-64 uppercase">
+        {moreThanOneUser ? "Create Lobby" : "Start Game"}
     </button>
 </form>
 
+<!-- Game Instructions -->
 <div class="bg-[url('https://placehold.co/450x300?text=Dots+And+Boxes')] bg-contain flex justify-center mt-10">
     <article class="max-w-[750px] space-y-4 bg-surface-500 p-8">
         <h2 class="h3">How to Play "Dots and Boxes"</h2>

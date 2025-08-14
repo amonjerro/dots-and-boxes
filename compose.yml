@@ -23,12 +23,16 @@ services:
            target: /src
     environment:
       PORT: ${CLIENT_PORT}
+      PUBLISH_EXCHANGE: "client_messages"
+      CONSUME_EXCHANGE: "server_broadcast"
   server:
     build: ./BackEndServer
     ports:
     - "${SERVER_PORT}:${SERVER_PORT}"
     environment:
       BROKER_URI: "amqp://${BROKER_USER}:${BROKER_PASS}@rabbitmq:${BROKER_PORT}/"
+      PUBLISH_EXCHANGE: "server_broadcast"
+      CONSUME_EXCHANGE: "client_messages"
     depends_on:
       rabbitmq:
         condition: service_healthy

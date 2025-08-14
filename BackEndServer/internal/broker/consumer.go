@@ -1,19 +1,23 @@
 package broker
 
-import (
-	amqp "github.com/rabbitmq/amqp091-go"
-)
+type Consumer interface {
+	AddHandler(MessageType, MessageHandler)
+	Consume()
+}
 
-type Consumer struct {
-	conn         *amqp.Connection
-	ch           *amqp.Channel
+type ServerConsumer struct {
+	conn         Connection
+	ch           Channel
 	queueName    string
 	exchangeName string
 	handlers     map[MessageType]MessageHandler
 }
 
-func NewConsumer(brokerURI string, queue string, exchange string) (*Consumer, error) {
-	conn, channel := Connect(brokerURI)
+func NewConsumer(brokerURI string, queue string, exchange string) (Consumer, error) {
+	conn, err := Connect(brokerURI)
+	failOnError(err, "Failed to connect to broker")
+	channel, err := conn.Channel()
+	failOnError(err, "Failed to connect to channel")
 	SetupExchange(channel, exchange)
 
 	q, err := channel.QueueDeclare(
@@ -36,7 +40,7 @@ func NewConsumer(brokerURI string, queue string, exchange string) (*Consumer, er
 	)
 	failOnError(err, "Failed to bind queue")
 
-	return &Consumer{
+	return &ServerConsumer{
 		conn:         conn,
 		ch:           channel,
 		queueName:    q.Name,
@@ -44,11 +48,11 @@ func NewConsumer(brokerURI string, queue string, exchange string) (*Consumer, er
 	}, nil
 }
 
-func (c *Consumer) AddHandler(key MessageType, handler MessageHandler) {
+func (c *ServerConsumer) AddHandler(key MessageType, handler MessageHandler) {
 	c.handlers[key] = handler
 }
 
-func (c *Consumer) Consume() {
+func (c *ServerConsumer) Consume() {
 	msgs, err := c.ch.Consume(
 		c.queueName,
 		"",

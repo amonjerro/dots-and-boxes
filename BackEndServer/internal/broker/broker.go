@@ -6,26 +6,50 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
+type Connection interface {
+	Channel() (Channel, error)
+	Close() error
+}
+
+type Channel interface {
+	ExchangeDeclare(string, string, bool, bool, bool, bool, amqp.Table) error
+	QueueDeclare(string, bool, bool, bool, bool, amqp.Table) (amqp.Queue, error)
+	QueueBind(string, string, string, bool, amqp.Table) error
+	Consume(string, string, bool, bool, bool, bool, amqp.Table) (<-chan amqp.Delivery, error)
+	Close() error
+}
+
+type amqpConnection struct {
+	*amqp.Connection
+}
+
+type amqpChannel struct {
+	*amqp.Channel
+}
+
 func failOnError(err error, msg string) {
 	if err != nil {
 		log.Panicf("%s %s", msg, err)
 	}
 }
 
-func Connect(uri string) (*amqp.Connection, *amqp.Channel) {
-	conn, err := amqp.Dial(uri)
-	failOnError(err, "Failed to connect to messaging service")
-	ch, err := conn.Channel()
-	failOnError(err, "Failed to open channel")
-	return conn, ch
+func (c *amqpConnection) Channel() (Channel, error) {
+	ch, err := c.Connection.Channel()
+	if err != nil {
+		return nil, err
+	}
+	return &amqpChannel{ch}, nil
 }
 
-/*
-We want to set up two exchanges:
- 1. For client games to publish actions and be consumed by this server
- 2. For this server to update the state of the game to all clients
-*/
-func SetupExchange(ch *amqp.Channel, exchangeName string) {
+func Connect(uri string) (Connection, error) {
+	conn, err := amqp.Dial(uri)
+	if err != nil {
+		return nil, err
+	}
+	return &amqpConnection{conn}, nil
+}
+
+func SetupExchange(ch Channel, exchangeName string) {
 	err := ch.ExchangeDeclare(
 		exchangeName, // exchange name
 		"topic",      // exchange type

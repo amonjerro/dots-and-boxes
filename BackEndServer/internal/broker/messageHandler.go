@@ -1,11 +1,11 @@
 package broker
 
 type MessageHandler interface {
-	Handle(m *Message)
+	Handle(m *Message) error
 }
 
 type GameStartHandler struct{}
 
-func (handler GameStartHandler) Handle(msg *Message) {
-
+func (handler GameStartHandler) Handle(msg *Message) error {
+	return nil
 }

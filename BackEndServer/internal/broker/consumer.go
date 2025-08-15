@@ -45,6 +45,7 @@ func NewConsumer(brokerURI string, queue string, exchange string) (Consumer, err
 		ch:           channel,
 		queueName:    q.Name,
 		exchangeName: exchange,
+		handlers:     make(map[MessageType]MessageHandler),
 	}, nil
 }
 

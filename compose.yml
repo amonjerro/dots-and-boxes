@@ -13,16 +13,10 @@ services:
       timeout: 30s
       retries: 3
   client:
-    build: ./FrontEndServer/
+    build: ./DABClient/
     ports:
-    - "${CLIENT_PORT}:${CLIENT_PORT}"
-    develop:
-       watch:
-         - action: sync
-           path: ./FrontEndServer/
-           target: /src
+    - "${CLIENT_PORT}:3000"
     environment:
-      PORT: ${CLIENT_PORT}
       PUBLISH_EXCHANGE: "client_messages"
       CONSUME_EXCHANGE: "server_broadcast"
   server:

@@ -1,8 +1,16 @@
-FROM node:24-alpine
-
-EXPOSE 3000
+FROM node:24-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
 COPY . .
+RUN npm run build
+RUN npm prune --production
 
-RUN npm install
 
-CMD ["npm", "run", "dev"]
+FROM node:24-alpine
+COPY --from=builder /app/build build/
+COPY --from=builder /app/node_modules node_modules/
+COPY package.json .
+EXPOSE 3000
+ENV NODE_ENV=production
+CMD ["node", "build"]

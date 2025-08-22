@@ -10,7 +10,17 @@ services:
       test: rabbitmq-diagnostics -q ping
       interval: 30s
       start_period: 10s
-      timeout: 30s
+      timeout: 3s
+      retries: 3
+  redis:
+    image: "redis"
+    ports:
+    - "${REDIS_PORT}:${REDIS_PORT}"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      start_period: 5s
+      timeout: 3s
       retries: 3
   client:
     build: ./DABClient/

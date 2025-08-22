@@ -41,3 +41,6 @@ services:
       rabbitmq:
         condition: service_healthy
         restart: true
+      redis:
+        condition: service_healthy
+        restart: true

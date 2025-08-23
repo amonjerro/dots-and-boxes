@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { goto } from "$app/navigation";
     import Icon from "$lib/components/Icon.svelte";
     import Select from "$lib/components/Select.svelte";
     import { difficulties, gridSizes } from "$lib/data/gameParams";

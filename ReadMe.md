@@ -12,6 +12,8 @@ On Docker Desktop, you can monitor the state and health of any service in the co
 
 # Architecture
 
+<img width="1423" height="702" alt="image" src="https://github.com/user-attachments/assets/2ef6907d-9cd1-47ee-b2eb-11870a50b2c8" />
+
 To support the online gaming experience it is important to separate game logic from the client. Clients and the backend server communicate through a messaging broker, keeping them decoupled to allow for scaling and better error management.
 
 The client shows the state of the game to the players and sends game actions to the back end. The web client and the front end server communicate through web sockets, to ensure that any updates that are received by the front end server are updated on the web client side.

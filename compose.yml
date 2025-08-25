@@ -26,9 +26,13 @@ services:
     build: ./DABClient/
     ports:
     - "${CLIENT_PORT}:3000"
+    command: ["npm", "run", "dev"]
     environment:
       PUBLISH_EXCHANGE: "client_messages"
       CONSUME_EXCHANGE: "server_broadcast"
+    volumes:
+      - ./DABClient:/app
+      - /app/node_modules
   server:
     build: ./BackEndServer
     ports:

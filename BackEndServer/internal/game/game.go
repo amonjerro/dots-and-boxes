@@ -34,6 +34,7 @@ type Game struct {
 	squaresByOpenEdges []utils.Set[string]
 }
 
+// Creates the pointer to a new game
 func NewGame(width int, height int, playerCount int) (*Game, error) {
 
 	squaresByOpenEdges := []utils.Set[string]{
@@ -59,6 +60,7 @@ func NewGame(width int, height int, playerCount int) (*Game, error) {
 	}, nil
 }
 
+// Updates a game's current turn marker
 func (g *Game) UpdateCurrentTurn() {
 	g.currentPlayerTurn = g.currentPlayerTurn + 1
 	if g.currentPlayerTurn > g.totalPlayers {
@@ -66,6 +68,7 @@ func (g *Game) UpdateCurrentTurn() {
 	}
 }
 
+// Initalizes a games internal variables and states when creating it from scratch
 func (g *Game) Initialize() {
 	// Set up
 	g.scores = make([]int, g.totalPlayers)
@@ -119,6 +122,7 @@ func (g *Game) Initialize() {
 	}
 }
 
+// Gets the type of the next player. Important for AI player turns
 func (g *Game) GetNextPlayerType() PlayerType {
 	return g.playerOrder[g.currentPlayerTurn]
 }

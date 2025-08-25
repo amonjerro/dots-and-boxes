@@ -71,7 +71,7 @@ func TestReduce(t *testing.T) {
 	}
 }
 
-func TestSet(t *testing.T) {
+func TestSetGeneralOperations(t *testing.T) {
 	set := &Set[int]{Elements: make(map[int]bool), Count: 0}
 
 	set.Add(1)
@@ -91,4 +91,26 @@ func TestSet(t *testing.T) {
 		t.Fatalf("Item retrieval failed")
 	}
 
+}
+
+func TestSetRepeatAdd(t *testing.T) {
+	set := &Set[int]{Elements: make(map[int]bool), Count: 0}
+	set.Add(1)
+	set.Add(1)
+
+	if set.Count != 1 {
+		t.Fatalf("Set has repeated elements or a miscount")
+	}
+}
+
+func TestSetRepeatRemove(t *testing.T) {
+	set := &Set[int]{Elements: make(map[int]bool), Count: 0}
+	set.Add(1)
+	set.Add(2)
+	set.Remove(1)
+	set.Remove(1)
+
+	if set.Count != 1 {
+		t.Fatalf("Set has repeated a delete operation or has a miscount")
+	}
 }

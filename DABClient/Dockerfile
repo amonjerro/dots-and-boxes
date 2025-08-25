@@ -1,16 +1,10 @@
-FROM node:24-alpine AS builder
+FROM node:24-slim
+
 WORKDIR /app
-COPY package*.json ./
+
+COPY ./package*.json /app
 RUN npm ci
-COPY . .
-RUN npm run build
-RUN npm prune --production
 
+COPY . /app
 
-FROM node:24-alpine
-COPY --from=builder /app/build build/
-COPY --from=builder /app/node_modules node_modules/
-COPY package.json .
-EXPOSE 3000
-ENV NODE_ENV=production
-CMD ["node", "build"]
+CMD ["npm", "run", "dev"]

@@ -10,15 +10,29 @@ services:
       test: rabbitmq-diagnostics -q ping
       interval: 30s
       start_period: 10s
-      timeout: 30s
+      timeout: 3s
+      retries: 3
+  redis:
+    image: "redis"
+    ports:
+    - "${REDIS_PORT}:${REDIS_PORT}"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      start_period: 5s
+      timeout: 3s
       retries: 3
   client:
     build: ./DABClient/
     ports:
     - "${CLIENT_PORT}:3000"
+    command: ["npm", "run", "dev"]
     environment:
       PUBLISH_EXCHANGE: "client_messages"
       CONSUME_EXCHANGE: "server_broadcast"
+    volumes:
+      - ./DABClient:/app
+      - /app/node_modules
   server:
     build: ./BackEndServer
     ports:
@@ -29,5 +43,8 @@ services:
       CONSUME_EXCHANGE: "client_messages"
     depends_on:
       rabbitmq:
+        condition: service_healthy
+        restart: true
+      redis:
         condition: service_healthy
         restart: true

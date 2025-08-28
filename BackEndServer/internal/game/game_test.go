@@ -18,19 +18,19 @@ func TestGameInstantiation(t *testing.T) {
 		t.Fatalf("Game Initialization Failed")
 	}
 
-	if game.height != parameters.height {
+	if game.Height != parameters.height {
 		t.Fatalf("Game Height incorrectly set")
 	}
 
-	if game.width != parameters.width {
+	if game.Width != parameters.width {
 		t.Fatalf("Game Width incorrectly set")
 	}
 
-	if game.totalPlayers != parameters.playerCount {
+	if game.TotalPlayers != parameters.playerCount {
 		t.Fatalf("Player count incorrectly set")
 	}
 
-	if len(game.squaresByOpenEdges) != 5 {
+	if len(game.SquaresByOpenEdges) != 5 {
 		t.Fatalf("Squares by open edges incorrect possibility setup")
 	}
 }
@@ -57,20 +57,20 @@ func TestGameInitialize(t *testing.T) {
 
 	game.Initialize()
 
-	if len(game.nodes) != (game.height-1)*(game.width-1) {
+	if len(game.Nodes) != (game.Height-1)*(game.Width-1) {
 		t.Fatalf("Node count is not correctly set")
 	}
 
-	if game.squaresByOpenEdges[0].Count != 0 {
+	if game.SquaresByOpenEdges[0].Count != 0 {
 		t.Fatalf("Enclosed squares exist in new game")
 	}
 
-	if game.squaresByOpenEdges[1].Count != 0 {
+	if game.SquaresByOpenEdges[1].Count != 0 {
 		t.Fatalf("Near-enclosed squares exist in new game")
 	}
 
 	for _, tt := range testEdges {
-		val, exists := game.edges[tt]
+		val, exists := game.Edges[tt]
 		if !exists {
 			t.Fatalf("Border edge not set %v", tt)
 		}

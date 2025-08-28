@@ -21,17 +21,17 @@ type Square struct {
 }
 
 type Game struct {
-	identifier         uuid.UUID
-	width              int
-	height             int
-	playerOrder        []PlayerType
-	totalPlayers       int
-	currentPlayerTurn  int
-	scores             []int
-	edges              map[string]bool
-	nodes              []string
-	squares            map[string]Square
-	squaresByOpenEdges []utils.Set[string]
+	Identifier         uuid.UUID           `json:"game_id"`
+	Width              int                 `json:"width"`
+	Height             int                 `json:"height"`
+	PlayerOrder        []PlayerType        `json:"player_order,omitempty"`
+	TotalPlayers       int                 `json:"total_players"`
+	CurrentPlayerTurn  int                 `json:"current_player_turn"`
+	Scores             []int               `json:"scores,omitempty"`
+	Edges              map[string]bool     `json:"edges,omitempty"`
+	Nodes              []string            `json:"nodes,omitempty"`
+	Squares            map[string]Square   `json:"squares"`
+	SquaresByOpenEdges []utils.Set[string] `json:"squares_by_edge"`
 }
 
 // Creates the pointer to a new game
@@ -49,56 +49,56 @@ func NewGame(width int, height int, playerCount int) (*Game, error) {
 	nodes := []string{}
 
 	return &Game{
-		identifier:         uuid.New(),
-		width:              width,
-		height:             height,
-		nodes:              nodes,
-		edges:              make(map[string]bool),
-		squares:            make(map[string]Square),
-		squaresByOpenEdges: squaresByOpenEdges,
-		totalPlayers:       playerCount,
+		Identifier:         uuid.New(),
+		Width:              width,
+		Height:             height,
+		Nodes:              nodes,
+		Edges:              make(map[string]bool),
+		Squares:            make(map[string]Square),
+		SquaresByOpenEdges: squaresByOpenEdges,
+		TotalPlayers:       playerCount,
 	}, nil
 }
 
 // Updates a game's current turn marker
 func (g *Game) UpdateCurrentTurn() {
-	g.currentPlayerTurn = g.currentPlayerTurn + 1
-	if g.currentPlayerTurn > g.totalPlayers {
-		g.currentPlayerTurn = 0
+	g.CurrentPlayerTurn = g.CurrentPlayerTurn + 1
+	if g.CurrentPlayerTurn > g.TotalPlayers {
+		g.CurrentPlayerTurn = 0
 	}
 }
 
 // Initalizes a games internal variables and states when creating it from scratch
 func (g *Game) Initialize() {
 	// Set up
-	g.scores = make([]int, g.totalPlayers)
+	g.Scores = make([]int, g.TotalPlayers)
 
 	// Nodes
-	for x := 1; x < g.width; x++ {
-		for y := 1; y < g.height; y++ {
+	for x := 1; x < g.Width; x++ {
+		for y := 1; y < g.Height; y++ {
 			coordinateString := fmt.Sprintf("%d,%d", x, y)
-			g.nodes = append(g.nodes, coordinateString)
+			g.Nodes = append(g.Nodes, coordinateString)
 		}
 	}
 
 	// Exterior Edges
-	for x := 1; x < g.width-1; x++ {
+	for x := 1; x < g.Width-1; x++ {
 		top := fmt.Sprintf("%d,1-%d,1", x, x+1)
-		bot := fmt.Sprintf("%d,%d-%d,%d", x, g.height-1, x+1, g.height-1)
-		g.edges[top] = true
-		g.edges[bot] = true
+		bot := fmt.Sprintf("%d,%d-%d,%d", x, g.Height-1, x+1, g.Height-1)
+		g.Edges[top] = true
+		g.Edges[bot] = true
 	}
 
-	for y := 1; y < g.height-1; y++ {
+	for y := 1; y < g.Height-1; y++ {
 		left := fmt.Sprintf("1,%d-1,%d", y, y+1)
-		right := fmt.Sprintf("%d,%d-%d,%d", g.width-1, y, g.width-1, y+1)
-		g.edges[left] = true
-		g.edges[right] = true
+		right := fmt.Sprintf("%d,%d-%d,%d", g.Width-1, y, g.Width-1, y+1)
+		g.Edges[left] = true
+		g.Edges[right] = true
 	}
 
 	// Interior Edges
-	for x := 1; x < g.width-1; x++ {
-		for y := 1; y < g.height-1; y++ {
+	for x := 1; x < g.Width-1; x++ {
+		for y := 1; y < g.Height-1; y++ {
 			coordinateString := fmt.Sprintf("%d,%d", x, y)
 			topEdge := fmt.Sprintf("%d,%d-%d,%d", x, y, x+1, y)
 			botEdge := fmt.Sprintf("%d,%d-%d,%d", x, y+1, x+1, y+1)
@@ -106,7 +106,7 @@ func (g *Game) Initialize() {
 			rightEdge := fmt.Sprintf("%d,%d-%d,%d", x+1, y, x+1, y+1)
 
 			count := utils.Reduce([]string{topEdge, botEdge, leftEdge, rightEdge}, func(acc int, val string) int {
-				_, exists := g.edges[val]
+				_, exists := g.Edges[val]
 				if exists {
 					return acc
 				}
@@ -116,13 +116,13 @@ func (g *Game) Initialize() {
 				edges:               []string{topEdge, botEdge, leftEdge, rightEdge},
 				openConnectionCount: count,
 			}
-			g.squares[coordinateString] = square
-			g.squaresByOpenEdges[count].Add(coordinateString)
+			g.Squares[coordinateString] = square
+			g.SquaresByOpenEdges[count].Add(coordinateString)
 		}
 	}
 }
 
 // Gets the type of the next player. Important for AI player turns
 func (g *Game) GetNextPlayerType() PlayerType {
-	return g.playerOrder[g.currentPlayerTurn]
+	return g.PlayerOrder[g.CurrentPlayerTurn]
 }

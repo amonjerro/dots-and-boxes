@@ -41,6 +41,7 @@ services:
       BROKER_URI: "amqp://${BROKER_USER}:${BROKER_PASS}@rabbitmq:${BROKER_PORT}/"
       PUBLISH_EXCHANGE: "server_broadcast"
       CONSUME_EXCHANGE: "client_messages"
+      SERVER_SECRET: "${abbysal-monkey-sleeve}"
     depends_on:
       rabbitmq:
         condition: service_healthy

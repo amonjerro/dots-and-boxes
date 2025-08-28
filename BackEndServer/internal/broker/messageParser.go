@@ -12,6 +12,7 @@ type Message struct {
 	Type MessageType
 }
 
+// Parses a message from JSON data
 func ParseMessage(data []byte) (*Message, error) {
 	var msg Message
 	err := json.Unmarshal(data, &msg)

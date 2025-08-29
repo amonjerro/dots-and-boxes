@@ -74,7 +74,10 @@ func (c *ServerConsumer) Consume() {
 			}
 			handler, ok := c.handlers[msg.Type]
 			if ok {
-				handler.Handle(msg)
+				err := handler.Handle(msg)
+				if err != nil {
+					failOnError(err, "Error handling message")
+				}
 			}
 		}
 	}()

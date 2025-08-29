@@ -9,7 +9,8 @@ const (
 )
 
 type Message struct {
-	Type MessageType
+	Type MessageType `json:"message_type"`
+	Body interface{} `json:"messge_body"`
 }
 
 // Parses a message from JSON data
